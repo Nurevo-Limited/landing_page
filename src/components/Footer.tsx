@@ -1,11 +1,10 @@
 const footerNav = [
   { href: "#problem", label: "The Problem" },
   { href: "#technology", label: "Technology" },
-  { href: "#market", label: "Market Opportunity" },
   { href: "#team", label: "About Us" },
 ];
 
-const corporateEmail = "hello@nurevo.tech";
+const corporateEmail = "info@nurevo.tech";
 
 export default function Footer() {
   return (
