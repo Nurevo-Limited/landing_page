@@ -1,0 +1,201 @@
+---
+import Base from "../layouts/Base.astro";
+import HeroSignal from "../components/HeroSignal.astro";
+import LaptopPreview from "../components/LaptopPreview.astro";
+import Icon from "../components/Icon.astro";
+import StepFigure from "../components/StepFigure.astro";
+import Section from "../components/ui/Section.astro";
+import SectionHeading from "../components/ui/SectionHeading.astro";
+import Button from "../components/ui/Button.astro";
+import SourceList from "../components/ui/SourceList.astro";
+import { pageByPath, site } from "../content/site";
+import { pageGraph } from "../lib/jsonld";
+
+const page = pageByPath("/");
+const home = site.home;
+const [lead, ...tail] = page.h1.split(", ");
+const stepKinds = ["conversation", "model", "score"];
+const sources = home.figures.map((group, index) => ({
+  n: index + 1,
+  name: group.sourceName,
+  url: group.sourceUrl,
+  note: group.sourceNote,
+}));
+const card = home.investorCard;
+---
+
+<Base title={page.title} description={page.description} path={page.path} jsonLd={pageGraph(page)}>
+  <div class="tone-dark border-b border-white/[0.07] bg-ink-2">
+    <p class="mx-auto flex w-full max-w-6xl items-center gap-3 px-6 py-2.5 text-sm text-slate-300">
+      <span aria-hidden="true" class="h-1.5 w-1.5 shrink-0 rounded-full bg-accent-2"></span>
+      {site.stage}
+    </p>
+  </div>
+
+  <section class="tone-dark relative overflow-clip bg-ink" aria-labelledby="hero-title">
+    <div class="mx-auto grid w-full max-w-6xl items-center gap-12 px-6 pt-16 pb-16 sm:pt-24 lg:grid-cols-12 lg:gap-8 lg:pb-24">
+      <div class="lg:col-span-6">
+        <h1 id="hero-title" class="font-display text-5xl leading-[1.04] text-white sm:text-6xl lg:text-7xl">
+          {
+            tail.length > 0 ? (
+              <>
+                {lead},{" "}
+                <em class="text-accent-2">{tail.join(", ")}</em>
+              </>
+            ) : (
+              page.h1
+            )
+          }
+        </h1>
+        <p class="mt-8 max-w-xl text-lg leading-8 text-slate-300">{site.subhead}</p>
+        <p class="mt-4 max-w-xl text-base text-slate-400">{site.ui.homeCtaNote}</p>
+        <div class="mt-10 flex flex-wrap gap-3">
+          <Button href="/technology">{site.ui.howItWorks}</Button>
+          <Button href="/contact" variant="secondary">{site.ui.talkToUs}</Button>
+        </div>
+      </div>
+      <div class="lg:col-span-6">
+        <HeroSignal />
+      </div>
+    </div>
+
+    <div class="mx-auto w-full max-w-6xl px-6 pb-20 sm:pb-28">
+      <h2 id="streams-caption" class="text-xs font-medium uppercase tracking-[0.16em] text-white/50">
+        {home.waveCaption}
+      </h2>
+      <ul class="mt-6 grid gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          home.streams.map((stream, index) => (
+            <li class:list={["rise bg-ink p-7", `delay-${index + 1}`]}>
+              <StepFigure kind={stream.kind} label={stream.title} compact tone="light" />
+              <h3 class="mt-5 text-base font-medium text-white">{stream.title}</h3>
+              <p class="mt-2 text-sm leading-6 text-slate-400">{stream.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <Section labelledby="how-heading">
+    <div class="flex flex-wrap items-end justify-between gap-8">
+      <SectionHeading id="how-heading" eyebrow={home.howTitle} title={home.howIntro} size="md" />
+      <Button href="/technology" variant="secondary">{site.ui.howItWorks}</Button>
+    </div>
+    <ol class="mt-16 grid gap-6 md:grid-cols-3">
+      {
+        home.steps.map((step, index) => (
+          <li class="reveal flex flex-col rounded-3xl border border-line bg-white p-3">
+            <div class="flex items-center justify-center rounded-2xl bg-mist px-6 py-8">
+              <StepFigure kind={stepKinds[index]} label={step.title} />
+            </div>
+            <div class="px-5 pt-6 pb-5">
+              <p class="text-sm font-medium text-link">{String(index + 1).padStart(2, "0")}</p>
+              <h3 class="font-display mt-2 text-2xl text-ink">{step.title}</h3>
+              <p class="mt-3 leading-7">{step.text}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </Section>
+
+  <Section tone="deep" labelledby="why-heading">
+    <div class="glow -right-40 top-10 h-[36rem] w-[36rem] opacity-60" aria-hidden="true" slot="bg"></div>
+    <div class="grid items-center gap-14 lg:grid-cols-12">
+      <div class="lg:col-span-5">
+        <SectionHeading id="why-heading" eyebrow={home.diffTitle} title={home.previewTitle} dark size="md" />
+        <ul class="mt-10 space-y-7">
+          {
+            home.diffs.map((diff) => (
+              <li class="reveal border-l border-white/15 pl-5">
+                <h3 class="text-base font-medium text-white">{diff.title}</h3>
+                <p class="mt-1.5 text-slate-300">{diff.text}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <figure class="reveal m-0 lg:col-span-7">
+        <LaptopPreview />
+        <figcaption class="mt-4 text-sm text-slate-400">
+          {site.technology.exampleCaption} {home.previewNote.text}
+        </figcaption>
+      </figure>
+    </div>
+  </Section>
+
+  <Section labelledby="dementia">
+    <SectionHeading id="dementia" eyebrow={home.problemTitle} title={home.problem} size="md" class="max-w-4xl" />
+    {
+      home.figures.map((group, groupIndex) => (
+        <div class="mt-16">
+          <h3 class="text-sm font-medium uppercase tracking-[0.16em] text-muted">{group.title}</h3>
+          <ul class="mt-6 grid gap-px overflow-hidden rounded-3xl border border-line bg-line sm:grid-cols-3">
+            {group.stats.map((stat) => (
+              <li class="reveal bg-white p-8">
+                <p class="font-display text-5xl leading-none text-ink">
+                  {stat.value}
+                  <sup class="ml-1 align-super font-sans text-sm text-link">
+                    <a class="link-quiet" href={`#source-${groupIndex + 1}`} aria-label={`${site.ui.source} ${groupIndex + 1}`}>
+                      {groupIndex + 1}
+                    </a>
+                  </sup>
+                </p>
+                <p class="mt-5 leading-7">{stat.label}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+    <div class="mt-10">
+      <SourceList sources={sources} />
+    </div>
+  </Section>
+
+  <Section tone="mist" labelledby="who-heading">
+    <SectionHeading id="who-heading" eyebrow={home.whoTitle} title={site.solutions.intro} size="md" />
+    <ul class="mt-14 grid gap-5 md:grid-cols-2">
+      {
+        site.solutions.audiences.map((route, index) => (
+          <li class="reveal group rounded-3xl border border-line bg-white p-8 transition-colors duration-300 hover:border-accent">
+            <div class="flex items-start justify-between gap-6">
+              <span class="flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-[#EEF3FF] to-[#E9FBFF] ring-1 ring-[#DCE6FF]">
+                <Icon kind={route.kind} />
+              </span>
+              <span class="text-sm font-medium text-muted">{String(index + 1).padStart(2, "0")}</span>
+            </div>
+            <h3 class="font-display mt-6 text-2xl text-ink">{route.heading}</h3>
+            <p class="mt-3 leading-7">{route.text}</p>
+          </li>
+        ))
+      }
+      <li class="tone-dark reveal relative overflow-clip rounded-3xl bg-ink p-8 md:col-span-2">
+        <div class="glow -right-24 -top-24 h-72 w-72 opacity-70" aria-hidden="true"></div>
+        <div class="relative flex flex-wrap items-end justify-between gap-8">
+          <div class="max-w-2xl">
+            <span class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/[0.05] ring-1 ring-white/10">
+              <Icon kind="investors" dark />
+            </span>
+            <h3 class="font-display mt-6 text-2xl text-white">{card.heading}</h3>
+            <p class="mt-3 leading-7 text-slate-300">{card.text}</p>
+          </div>
+          <Button href={card.href}>{site.ui.readTheBrief}</Button>
+        </div>
+      </li>
+    </ul>
+
+  </Section>
+
+  <Section tone="dark" labelledby="cta-heading" class="hairline-top">
+    <div class="glow left-1/2 top-1/2 h-[30rem] w-[44rem] max-w-full -translate-x-1/2 -translate-y-1/2 opacity-70" aria-hidden="true" slot="bg"></div>
+    <div class="flex flex-col items-center text-center">
+      <h2 id="cta-heading" class="font-display text-4xl text-white sm:text-5xl">{site.ui.talkToUs}</h2>
+      <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-300">{site.notForClinicalUse}</p>
+      <div class="mt-10 flex flex-wrap justify-center gap-3">
+        <Button href="/contact">{site.ui.talkToUs}</Button>
+      </div>
+    </div>
+  </Section>
+</Base>

@@ -1,7 +1,158 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "vite",
+  "framework": "astro",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "installCommand": "npm ci"
+  "installCommand": "npm ci",
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formspree.io; img-src 'self' data:; font-src 'self'; style-src 'self'; script-src 'self' https://va.vercel-scripts.com; connect-src 'self' https://formspree.io https://va.vercel-scripts.com https://vitals.vercel-insights.com; upgrade-insecure-requests"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)\\.md",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/markdown; charset=utf-8"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    },
+    {
+      "source": "/(llms|llms-full|facts)\\.txt",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/news",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/news/:path*",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/research",
+      "destination": "/solutions#research",
+      "permanent": true
+    },
+    {
+      "source": "/research.md",
+      "destination": "/solutions.md",
+      "permanent": true
+    },
+    {
+      "source": "/investors",
+      "destination": "/about#investors",
+      "permanent": true
+    },
+    {
+      "source": "/investors.md",
+      "destination": "/about.md",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "nurevo.tech"
+        }
+      ],
+      "destination": "https://nurevo.health/",
+      "permanent": true
+    },
+    {
+      "source": "/:path+",
+      "has": [
+        {
+          "type": "host",
+          "value": "nurevo.tech"
+        }
+      ],
+      "destination": "https://nurevo.health/:path+",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.nurevo.tech"
+        }
+      ],
+      "destination": "https://nurevo.health/",
+      "permanent": true
+    },
+    {
+      "source": "/:path+",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.nurevo.tech"
+        }
+      ],
+      "destination": "https://nurevo.health/:path+",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.nurevo.health"
+        }
+      ],
+      "destination": "https://nurevo.health/",
+      "permanent": true
+    },
+    {
+      "source": "/:path+",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.nurevo.health"
+        }
+      ],
+      "destination": "https://nurevo.health/:path+",
+      "permanent": true
+    }
+  ]
 }

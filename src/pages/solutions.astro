@@ -1,0 +1,289 @@
+---
+import Base from "../layouts/Base.astro";
+import Icon from "../components/Icon.astro";
+import PageHero from "../components/ui/PageHero.astro";
+import Section from "../components/ui/Section.astro";
+import SectionHeading from "../components/ui/SectionHeading.astro";
+import Button from "../components/ui/Button.astro";
+import { pageByPath, site } from "../content/site";
+import { pageGraph } from "../lib/jsonld";
+
+const page = pageByPath("/solutions");
+const r = site.research;
+const versionName = r.version.split(".")[0];
+const tiles = r.card.filter((item) => item.id !== "fairness");
+const fairness = r.card.find((item) => item.id === "fairness");
+const evaluationIcons = ["population", "output", "oversight"];
+const reg = r.regulatory;
+const roadmapIcons = ["today", "feasibility", "model", "studies", "pathway"];
+const nowIndex = r.roadmap.findIndex((item) => item.state === "now");
+const desktopProgress = ["w-0", "w-[20%]", "w-[40%]", "w-[60%]", "w-[80%]"][nowIndex] ?? "w-0";
+const mobileProgress = [
+  "bg-line",
+  "bg-linear-to-b from-accent from-25% to-line to-25%",
+  "bg-linear-to-b from-accent from-50% to-line to-50%",
+  "bg-linear-to-b from-accent from-75% to-line to-75%",
+  "bg-linear-to-b from-accent to-accent-2",
+][nowIndex] ?? "bg-line";
+const roadmapStatus = {
+  done: site.ui.completed,
+  now: site.ui.inProgress,
+  planned: site.ui.planned,
+} as const;
+const journey = r.roadmap.map((item, index) => ({
+  name: item.name,
+  state: item.state,
+  label: roadmapStatus[item.state],
+  icon: roadmapIcons[index] ?? "pathway",
+}));
+const toc = [
+  { id: "who", label: site.home.whoTitle },
+  { id: "research", label: r.title },
+  { id: "system-card", label: r.systemCardTitle },
+  { id: "data-protection", label: r.dataTitle },
+  { id: "roadmap", label: r.roadmapTitle },
+  { id: "evaluation", label: r.evaluation.title },
+  { id: "regulatory", label: r.standardsTitle },
+];
+---
+
+<Base title={page.title} description={page.description} path={page.path} jsonLd={pageGraph(page)}>
+  <PageHero page={page} intro={site.solutions.intro} visual="solutions">
+    <nav class="mt-10" aria-label={site.ui.onThisPage}>
+      <ul class="flex flex-wrap gap-2">
+        {
+          toc.map((item) => (
+            <li>
+              <a class="link-quiet inline-flex min-h-9 items-center rounded-full border border-white/15 px-4 text-sm text-slate-200 hover:border-white/50" href={`#${item.id}`}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </PageHero>
+
+  <Section id="who" labelledby="who-heading">
+    <h2 id="who-heading" class="font-display text-4xl text-ink sm:text-5xl">{site.home.whoTitle}</h2>
+    <ol class="mt-14 grid gap-5 md:grid-cols-2">
+      {
+        site.solutions.audiences.map((audience, index) => (
+          <li class="reveal group relative overflow-clip rounded-3xl border border-line bg-white p-8 transition-colors duration-300 hover:border-accent sm:p-10">
+            <div class="flex items-start justify-between gap-6">
+              <span class="flex h-20 w-20 items-center justify-center rounded-3xl bg-linear-to-br from-[#EEF3FF] to-[#E9FBFF] ring-1 ring-[#DCE6FF]">
+                <Icon kind={audience.kind} class="h-12 w-12" />
+              </span>
+              <span class="font-display text-4xl text-line">{String(index + 1).padStart(2, "0")}</span>
+            </div>
+            <h2 class="font-display mt-8 text-3xl text-ink">{audience.heading}</h2>
+            <p class="mt-4 text-lg leading-8">{audience.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+    <div class="tone-dark relative mt-12 overflow-clip rounded-3xl bg-ink p-8 sm:p-10">
+      <div class="glow -right-24 -top-24 h-72 w-72 opacity-70" aria-hidden="true"></div>
+      <div class="relative flex flex-wrap items-center justify-between gap-6">
+        <p class="max-w-2xl text-lg leading-8 text-slate-200">{site.notForClinicalUse}</p>
+        <Button href="/contact#clinical">{site.ui.talkToUs}</Button>
+      </div>
+    </div>
+  </Section>
+
+  <Section id="research" tone="mist" labelledby="research-heading">
+    <SectionHeading id="research-heading" eyebrow={r.title} title={r.intro} size="md" />
+    <dl class="mt-10 grid max-w-3xl grid-cols-2 gap-px overflow-clip rounded-2xl border border-line bg-line sm:grid-cols-3">
+      <div class="bg-white px-5 py-4">
+        <dt class="text-xs uppercase tracking-[0.16em] text-muted">{r.versionLabel}</dt>
+        <dd class="mt-1 text-ink">{versionName}</dd>
+      </div>
+      <div class="bg-white px-5 py-4">
+        <dt class="text-xs uppercase tracking-[0.16em] text-muted">{site.ui.lastReviewed}</dt>
+        <dd class="mt-1 text-ink"><time datetime={site.updatedIso}>{site.updated}</time></dd>
+      </div>
+      <div class="col-span-2 bg-white px-5 py-4 sm:col-span-1">
+        <dt class="text-xs uppercase tracking-[0.16em] text-muted">{site.ui.status}</dt>
+        <dd class="mt-1 text-ink">{site.prototypeLine}</dd>
+      </div>
+    </dl>
+    <p class="mt-8 max-w-3xl text-lg">{r.where[0]}</p>
+
+    <h3 id="system-card" class="font-display mt-20 scroll-mt-24 text-3xl text-ink sm:text-4xl">{r.systemCardTitle}</h3>
+    <ul class="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+      {
+        tiles.map((item) => (
+          <li class="reveal flex flex-col rounded-3xl border border-line bg-white p-7" id={item.id}>
+            <Icon kind={item.id} />
+            <h4 class="font-display mt-6 text-2xl text-ink">{item.heading}</h4>
+            {item.paragraphs.map((paragraph) => (
+              <p class="mt-3 leading-7">{paragraph}</p>
+            ))}
+          </li>
+        ))
+      }
+      {
+        fairness && (
+          <li class="reveal grid items-center gap-8 rounded-3xl border border-line bg-white p-7 md:col-span-2 md:grid-cols-[auto_1fr] lg:col-span-3" id={fairness.id}>
+            <Icon kind={fairness.id} class="h-14 w-14" />
+            <div>
+              <h4 class="font-display text-2xl text-ink">{fairness.heading}</h4>
+              {fairness.paragraphs.map((paragraph) => (
+                <p class="mt-3 max-w-3xl leading-7">{paragraph}</p>
+              ))}
+            </div>
+          </li>
+        )
+      }
+    </ul>
+  </Section>
+
+  <Section id="data-protection" tone="deep" labelledby="data-heading">
+    <div class="glow -left-40 top-10 h-[30rem] w-[30rem] opacity-50" aria-hidden="true" slot="bg"></div>
+    <div>
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <div class="max-w-2xl">
+          <h2 id="data-heading" class="font-display text-4xl text-white sm:text-5xl">{r.dataTitle}</h2>
+          <p class="mt-6 text-lg leading-8">{r.dataIntro}</p>
+        </div>
+        <p><a href="/privacy">Privacy</a></p>
+      </div>
+      <ul class="mt-12 grid gap-5 md:grid-cols-3">
+        {
+          r.dataPrinciples.map((item) => (
+            <li class="reveal rounded-3xl border border-white/10 bg-white/[0.03] p-6">
+              <Icon kind={item.kind} dark />
+              <h3 class="font-display mt-6 text-2xl text-white">{item.name}</h3>
+              <p class="mt-3 leading-7 text-slate-300">{item.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </Section>
+
+  <Section id="roadmap" labelledby="roadmap-heading">
+    <SectionHeading id="roadmap-heading" eyebrow={r.roadmapTitle} title={r.roadmapIntro} size="md" />
+    <div class="relative mt-16">
+      <div aria-hidden="true" class="absolute top-8 left-[10%] hidden h-0.5 w-[80%] bg-line md:block"></div>
+      <div
+        aria-hidden="true"
+        class:list={[
+          "reveal-grow-x absolute top-8 left-[10%] hidden h-0.5 bg-linear-to-r from-accent to-accent-2 md:block",
+          desktopProgress,
+        ]}
+      >
+      </div>
+      <div aria-hidden="true" class:list={["absolute top-4 bottom-4 left-8 w-0.5 md:hidden", mobileProgress]}></div>
+      <ol class="relative grid gap-10 md:grid-cols-5 md:gap-4">
+        {
+          journey.map((step) => (
+            <li class="reveal relative flex gap-5 md:flex-col md:items-center md:text-center">
+              <span
+                class:list={[
+                  "relative flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl",
+                  step.state === "now" &&
+                    "bg-ink shadow-[0_0_0_6px_rgba(115,152,255,0.18),0_12px_32px_-8px_rgba(115,152,255,0.8)]",
+                  step.state === "done" && "bg-white shadow-[0_10px_30px_-18px_rgba(10,22,40,0.45)] ring-1 ring-accent",
+                  step.state === "planned" && "bg-white shadow-[0_10px_30px_-18px_rgba(10,22,40,0.45)] ring-1 ring-line",
+                ]}
+              >
+                <Icon kind={step.icon} dark={step.state === "now"} class="h-9 w-9" />
+              </span>
+              <div class="md:mt-6">
+                <p
+                  class:list={[
+                    "inline-flex rounded-full px-3 py-0.5 text-xs font-medium",
+                    step.state === "now" && "bg-ink text-accent-2",
+                    step.state === "done" && "bg-[#EEF3FF] text-link",
+                    step.state === "planned" && "border border-line text-muted",
+                  ]}
+                >
+                  {step.label}
+                </p>
+                <p class="font-display mt-3 text-xl leading-snug text-ink">{step.name}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+
+    <h3 id="evaluation" class="font-display mt-28 scroll-mt-24 text-3xl text-ink sm:text-4xl">{r.evaluation.title}</h3>
+    <p class="mt-4 max-w-3xl text-lg">{r.evaluation.intro}</p>
+    <ul class="mt-10 grid gap-5 md:grid-cols-3">
+      {
+        r.evaluation.items.map((item, index) => (
+          <li class="reveal rounded-3xl border border-line bg-mist p-7">
+            <Icon kind={evaluationIcons[index] ?? "output"} />
+            <h4 class="font-display mt-6 text-xl text-ink">{item.name}</h4>
+            <p class="mt-3 leading-7">{item.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </Section>
+
+  <Section id="regulatory" tone="dark" labelledby="regulatory-heading">
+    <div class="glow -right-40 -top-24 h-[34rem] w-[34rem] opacity-60" aria-hidden="true" slot="bg"></div>
+    <div class="grid gap-12 lg:grid-cols-12">
+      <div class="lg:col-span-5">
+        <span class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/[0.04] ring-1 ring-white/10">
+          <Icon kind="pathway" dark class="h-10 w-10" />
+        </span>
+        <h2 id="regulatory-heading" class="font-display mt-8 text-4xl text-white sm:text-5xl">{r.standardsTitle}</h2>
+        <p class="mt-6 text-lg leading-8">{reg.intro}</p>
+        <p class="mt-8 rounded-2xl border border-accent/30 bg-accent/[0.06] p-5 leading-7 text-slate-200">{site.disclaimer}</p>
+      </div>
+      <dl class="self-start divide-y divide-white/10 overflow-clip rounded-3xl border border-white/10 bg-white/[0.02] lg:col-span-7">
+        {
+          reg.status.map((row) => (
+            <div class="reveal grid gap-2 px-6 py-5 sm:grid-cols-[11rem_1fr] sm:items-center sm:gap-6">
+              <dt class="text-xs font-medium uppercase tracking-[0.16em] text-white/50">{row.label}</dt>
+              <dd class="flex items-center gap-3 text-white">
+                <span
+                  aria-hidden="true"
+                  class:list={[
+                    "h-2.5 w-2.5 shrink-0 rounded-full",
+                    row.state === "no" && "border border-slate-400",
+                    row.state === "planned" && "border-2 border-accent",
+                    row.state === "info" && "bg-accent-2",
+                  ]}
+                ></span>
+                <span>{row.value}</span>
+                {row.state === "planned" && (
+                  <span class="ml-auto shrink-0 rounded-full border border-accent/50 px-2.5 py-0.5 text-xs text-accent-2">{site.ui.planned}</span>
+                )}
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+
+    <h3 class="font-display mt-24 text-3xl text-white">{reg.pathwayTitle}</h3>
+    <p class="mt-4 max-w-3xl text-lg leading-8">{r.standards[1]}</p>
+    <div class="relative mt-12">
+      <div aria-hidden="true" class="absolute top-5 left-5 hidden h-px w-[calc(75%+1.125rem)] bg-white/10 md:block"></div>
+      <div aria-hidden="true" class="reveal-grow-x absolute top-5 left-5 hidden h-px w-[calc(75%+1.125rem)] bg-linear-to-r from-accent to-accent-2 md:block"></div>
+      <ol class="relative grid gap-8 md:grid-cols-4 md:gap-6">
+        {
+          reg.pathway.map((step, index) => (
+            <li class="reveal">
+              <span class="relative flex h-10 w-10 items-center justify-center rounded-full border border-accent bg-ink text-sm font-semibold text-accent-2">
+                {index + 1}
+              </span>
+              <p class="mt-5 text-lg font-medium text-white">{step.name}</p>
+              <p class="mt-2 leading-7 text-slate-300">{step.text}</p>
+              <p class="mt-3 text-xs font-medium uppercase tracking-[0.16em] text-white/50">{site.ui.planned}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+    <p class="mt-12 text-sm text-slate-400">{reg.note}</p>
+    <p class="mt-3 text-sm text-slate-400">
+      {site.ui.lastUpdated} <time datetime={site.updatedIso}>{site.updated}</time>
+    </p>
+  </Section>
+</Base>

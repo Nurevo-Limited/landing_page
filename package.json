@@ -1,35 +1,35 @@
 {
-  "name": "nurevo_landing",
+  "name": "nurevo-health",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "engines": {
-    "node": ">=20.19.0"
+    "node": ">=22"
   },
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "dev": "astro dev",
+    "build": "astro build",
+    "postbuild": "tsx scripts/check-release.mjs",
+    "lint": "astro check",
+    "preview": "astro preview",
+    "check": "tsx scripts/check-release.mjs",
+    "og": "tsx scripts/build-og.mjs",
+    "indexnow": "tsx scripts/indexnow.mjs"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.3.1",
-    "react": "^19.2.6",
-    "react-dom": "^19.2.6",
-    "tailwindcss": "^4.3.1"
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/newsreader": "^5.3.0",
+    "astro": "^5.15.0"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "@types/node": "^24.12.3",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.1",
-    "eslint": "^10.3.0",
-    "eslint-plugin-react-hooks": "^7.1.1",
-    "eslint-plugin-react-refresh": "^0.5.2",
-    "globals": "^17.6.0",
-    "typescript": "~6.0.2",
-    "typescript-eslint": "^8.59.2",
-    "vite": "^8.0.12"
+    "@astrojs/check": "^0.9.5",
+    "@resvg/resvg-js": "^2.6.2",
+    "@tailwindcss/vite": "^4.3.1",
+    "@types/node": "^26.6.6",
+    "satori": "^0.12.2",
+    "sharp": "^0.34.4",
+    "tailwindcss": "^4.3.1",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
   }
 }

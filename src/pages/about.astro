@@ -1,0 +1,139 @@
+---
+import Base from "../layouts/Base.astro";
+import FactsTable from "../components/FactsTable.astro";
+import Icon from "../components/Icon.astro";
+import PageHero from "../components/ui/PageHero.astro";
+import Section from "../components/ui/Section.astro";
+import SectionHeading from "../components/ui/SectionHeading.astro";
+import Button from "../components/ui/Button.astro";
+import { facts, pageByPath, site } from "../content/site";
+import { pageGraph } from "../lib/jsonld";
+
+const page = pageByPath("/about");
+const inv = site.investors;
+const snapshotTerms = ["Stage", "Sector", "Founded", "Legal name", "Company number", "Registered in", "Headquarters"];
+const allFacts = facts();
+const snapshot = snapshotTerms
+  .map((term) => allFacts.find((row) => row.term === term))
+  .filter((row) => row !== undefined);
+const diffIcons = ["inputs", "population", "output"];
+const roadmapStatus = {
+  done: site.ui.completed,
+  now: site.ui.inProgress,
+  planned: site.ui.planned,
+} as const;
+const toc = [
+  { id: "mission", label: "Mission" },
+  { id: "story", label: "Our story" },
+  { id: "investors", label: inv.title },
+  { id: "facts", label: "Company facts" },
+];
+---
+
+<Base title={page.title} description={page.description} path={page.path} jsonLd={pageGraph(page)}>
+  <PageHero page={page} intro={site.identity} visual="about">
+    <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-300">{site.shortDescription}</p>
+    <nav class="mt-10" aria-label={site.ui.onThisPage}>
+      <ul class="flex flex-wrap gap-2">
+        {
+          toc.map((item) => (
+            <li>
+              <a class="link-quiet inline-flex min-h-9 items-center rounded-full border border-white/15 px-4 text-sm text-slate-200 hover:border-white/50" href={`#${item.id}`}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </PageHero>
+
+  <Section tone="mist" labelledby="mission">
+    <h2 id="mission" class="inline-flex items-center gap-2.5 text-xs font-medium uppercase tracking-[0.16em] text-link">
+      <span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-accent"></span>Mission
+    </h2>
+    <blockquote class="reveal mt-8 max-w-4xl">
+      <p class="font-display text-4xl leading-[1.15] text-ink sm:text-5xl">{site.mission}</p>
+    </blockquote>
+  </Section>
+
+  <Section labelledby="story">
+    <div class="grid gap-12 lg:grid-cols-12">
+      <h2 id="story" class="font-display text-3xl text-ink sm:text-4xl lg:col-span-4">Our story</h2>
+      <p class="reveal text-xl leading-9 text-body lg:col-span-8">{site.story}</p>
+    </div>
+  </Section>
+
+  <Section id="investors" tone="dark" labelledby="investors-heading">
+    <div class="glow -right-40 -top-20 h-[34rem] w-[34rem] opacity-60" aria-hidden="true" slot="bg"></div>
+    <SectionHeading id="investors-heading" eyebrow={site.ui.investorBrief} title={inv.intro.text} dark size="md" />
+
+    <h3 class="mt-14 text-xs font-medium uppercase tracking-[0.16em] text-white/50">{inv.snapshotTitle}</h3>
+    <dl class="mt-5 grid gap-px overflow-clip rounded-3xl border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-4 [&>div:last-child]:lg:col-span-2">
+      {
+        snapshot.map((row) => (
+          <div class="bg-ink p-6">
+            <dt class="text-xs font-medium uppercase tracking-[0.16em] text-white/50">{row.term}</dt>
+            <dd class="mt-2 leading-7 text-white">
+              {row.href ? (
+                <a href={row.href} target="_blank" rel="noopener noreferrer">
+                  {row.value}
+                </a>
+              ) : (
+                row.value
+              )}
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+
+    <h3 class="mt-16 text-xs font-medium uppercase tracking-[0.16em] text-white/50">{site.home.diffTitle}</h3>
+    <ul class="mt-5 grid gap-5 md:grid-cols-3">
+      {
+        site.home.diffs.map((diff, index) => (
+          <li class="reveal rounded-3xl border border-white/10 bg-white/[0.03] p-6">
+            <Icon kind={diffIcons[index] ?? "inputs"} dark />
+            <p class="font-display mt-5 text-2xl text-white">{diff.title}</p>
+            <p class="mt-2 leading-7 text-slate-300">{diff.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <h3 class="mt-16 text-xs font-medium uppercase tracking-[0.16em] text-white/50">{inv.nextTitle}</h3>
+    <ol class="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
+      {
+        site.research.roadmap.map((item, index) => (
+          <li class="reveal rounded-3xl border border-white/10 p-6">
+            <p class="text-sm font-medium text-accent-2">{String(index + 1).padStart(2, "0")}</p>
+            <p class="mt-3 leading-7 font-medium text-white">{item.name}</p>
+            <p class="mt-3 text-sm text-slate-300">{roadmapStatus[item.state]}</p>
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="mt-16 flex flex-wrap items-center justify-between gap-6 border-t border-white/10 pt-10">
+      <p class="max-w-2xl text-lg leading-8 text-slate-200">{inv.contact.text}</p>
+      <Button href="/contact#investors">{site.ui.talkToUs}</Button>
+    </div>
+  </Section>
+
+  <Section labelledby="facts">
+    <div class="grid gap-12 lg:grid-cols-12">
+      <div class="lg:col-span-4">
+        <h2 id="facts" class="font-display text-3xl text-ink sm:text-4xl">Company facts</h2>
+        <p class="mt-4 text-sm">
+          <a href="/facts.txt">{site.company.factsLabel}</a>
+        </p>
+      </div>
+      <div class="lg:col-span-8">
+        <FactsTable />
+        <p class="mt-10 text-sm text-muted">
+          {site.ui.lastUpdated} <time datetime={site.updatedIso}>{site.updated}</time>
+        </p>
+      </div>
+    </div>
+  </Section>
+</Base>

@@ -1,0 +1,37 @@
+---
+import { facts, site } from "../content/site";
+
+const rows = facts();
+---
+
+<div class="overflow-x-auto">
+  <table class="w-full border-collapse text-left text-sm">
+    <caption class="sr-only">
+      Company facts for {site.legalName}
+    </caption>
+    <tbody>
+      {
+        rows.map((row) => (
+          <tr class="border-b border-line">
+            <th scope="row" class="w-[38%] py-3 pr-4 align-top font-medium text-ink">
+              {row.term}
+            </th>
+            <td class="py-3 align-top text-body wrap-anywhere">
+              {row.href ? (
+                row.href.startsWith("mailto:") ? (
+                  <a href={row.href}>{row.value}</a>
+                ) : (
+                  <a href={row.href} target="_blank" rel="noopener noreferrer">
+                    {row.value}
+                  </a>
+                )
+              ) : (
+                row.value
+              )}
+            </td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>

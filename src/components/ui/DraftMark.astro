@@ -1,0 +1,12 @@
+---
+import { site } from "../../content/site";
+
+interface Props {
+  dark?: boolean;
+  class?: string;
+}
+
+const { dark = false, class: className } = Astro.props;
+---
+
+<span class:list={["draft-mark", dark ? "text-accent-2" : "text-link", className]}>{site.ui.toBeApproved}</span>

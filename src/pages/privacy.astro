@@ -1,0 +1,16 @@
+---
+import Base from "../layouts/Base.astro";
+import PageHero from "../components/ui/PageHero.astro";
+import { pageByPath, site } from "../content/site";
+import { pageGraph } from "../lib/jsonld";
+
+const page = pageByPath("/privacy");
+---
+
+<Base title={page.title} description={page.description} path={page.path} jsonLd={pageGraph(page)}>
+  <PageHero page={page} tone="light" width="prose" />
+  <div class="mx-auto w-full max-w-3xl px-6 py-14 sm:py-20">
+    <p class="rounded-2xl border border-dashed border-line bg-mist px-5 py-4 font-medium text-ink">{site.ui.legalPlaceholder}</p>
+    {site.legal.privacy.map((paragraph) => <p class="mt-6 text-lg leading-8">{paragraph}</p>)}
+  </div>
+</Base>

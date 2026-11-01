@@ -1,0 +1,32 @@
+---
+import type { Crumb } from "../content/site";
+
+interface Props {
+  crumbs: Crumb[];
+  dark?: boolean;
+}
+
+const { crumbs, dark = false } = Astro.props;
+---
+
+<nav aria-label="Breadcrumb">
+  <ol class:list={["flex flex-wrap gap-2 text-sm", dark ? "text-slate-400" : "text-muted"]}>
+    {
+      crumbs.map((crumb, index) => {
+        const last = index === crumbs.length - 1;
+        return (
+          <li class="flex items-center gap-2">
+            {index > 0 && <span aria-hidden="true">/</span>}
+            {last ? (
+              <span aria-current="page" class={dark ? "text-slate-200" : "text-body"}>
+                {crumb.name}
+              </span>
+            ) : (
+              <a class="link-quiet" href={crumb.path}>{crumb.name}</a>
+            )}
+          </li>
+        );
+      })
+    }
+  </ol>
+</nav>

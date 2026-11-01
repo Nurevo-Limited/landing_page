@@ -1,0 +1,174 @@
+---
+/**
+ * Numbered pipeline from conversation to clinician review, built from
+ * site.technology.flow. Two drawings share the same labels: a horizontal
+ * one for wide screens and a vertical one for phones. Labels are real SVG
+ * text, and each drawing has a title and description for screen readers.
+ */
+import { site } from "../content/site";
+
+const { flow } = site.technology;
+
+function wrap(text: string, max: number): string[] {
+  const lines: string[] = [];
+  let line = "";
+  for (const word of text.split(" ")) {
+    const next = line ? `${line} ${word}` : word;
+    if (next.length > max && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = next;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+const steps = flow.steps.map((step) => ({
+  title: step.title,
+  list: step.lines.length > 1,
+  lines: step.lines.length > 1 ? step.lines : wrap(step.lines[0], 20),
+}));
+
+// Wide layout
+const boxW = 200;
+const gap = 30;
+const boxH = 232;
+const top = 14;
+const wide = steps.map((step, index) => ({ ...step, x: 8 + index * (boxW + gap) }));
+const wideWidth = 8 * 2 + steps.length * boxW + (steps.length - 1) * gap;
+
+// Narrow layout
+const narrowW = 340;
+let y = 8;
+const narrow = steps.map((step) => {
+  const height = 84 + step.lines.length * 24;
+  const box = { ...step, y, height };
+  y += height + 36;
+  return box;
+});
+const narrowHeight = y - 36 + 8;
+---
+
+<figure class="m-0">
+  <svg
+    role="img"
+    aria-labelledby="pipeline-title-wide pipeline-desc-wide"
+    viewBox={`0 0 ${wideWidth} ${boxH + top * 2}`}
+    class="hidden h-auto w-full md:block"
+  >
+    <title id="pipeline-title-wide">{flow.title}</title>
+    <desc id="pipeline-desc-wide">{flow.description}</desc>
+    {
+      wide.map((step, index) => (
+        <g>
+          <rect
+            x={step.x}
+            y={top}
+            width={boxW}
+            height={boxH}
+            rx="20"
+            fill="#FFFFFF"
+            stroke={step.list ? "#7398FF" : "#E2E8F0"}
+            stroke-width={step.list ? "1.5" : "1"}
+          />
+          <circle cx={step.x + 34} cy={top + 36} r="15" fill="none" stroke="url(#nv-grad-deep)" stroke-width="1.6" />
+          <text
+            x={step.x + 34}
+            y={top + 41}
+            text-anchor="middle"
+            fill="#2F5BD8"
+            font-size="13"
+            font-weight="600"
+            font-family="Inter, sans-serif"
+          >
+            {index + 1}
+          </text>
+          <text x={step.x + 22} y={top + 92} fill="#0A1628" font-size="22" font-family="Newsreader, Georgia, serif">
+            {step.title}
+          </text>
+          {step.lines.map((line, lineIndex) => (
+            <g>
+              {step.list && <circle cx={step.x + 26} cy={top + 123 + lineIndex * 26} r="3" fill="url(#nv-grad-deep)" />}
+              <text
+                x={step.x + (step.list ? 36 : 22)}
+                y={top + 128 + lineIndex * 26}
+                fill="#334155"
+                font-size={step.list ? "13" : "14"}
+                font-family="Inter, sans-serif"
+              >
+                {line}
+              </text>
+            </g>
+          ))}
+          {index < wide.length - 1 && (
+            <g>
+              <path
+                class="reveal-draw"
+                pathLength="1"
+                d={`M${step.x + boxW + 4} ${top + boxH / 2}H${step.x + boxW + gap - 6}`}
+                stroke="#7398FF"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <path
+                d={`M${step.x + boxW + gap - 11} ${top + boxH / 2 - 5}l5 5-5 5`}
+                stroke="#7398FF"
+                stroke-width="2"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </g>
+          )}
+        </g>
+      ))
+    }
+  </svg>
+
+  <svg
+    role="img"
+    aria-labelledby="pipeline-title-narrow pipeline-desc-narrow"
+    viewBox={`0 0 ${narrowW + 16} ${narrowHeight}`}
+    class="h-auto w-full max-w-md md:hidden"
+  >
+    <title id="pipeline-title-narrow">{flow.title}</title>
+    <desc id="pipeline-desc-narrow">{flow.description}</desc>
+    {
+      narrow.map((step, index) => (
+        <g>
+          <rect
+            x="8"
+            y={step.y}
+            width={narrowW}
+            height={step.height}
+            rx="18"
+            fill="#FFFFFF"
+            stroke={step.list ? "#7398FF" : "#E2E8F0"}
+          />
+          <circle cx="40" cy={step.y + 34} r="14" fill="none" stroke="url(#nv-grad-deep)" stroke-width="1.6" />
+          <text x="40" y={step.y + 39} text-anchor="middle" fill="#2F5BD8" font-size="13" font-weight="600" font-family="Inter, sans-serif">
+            {index + 1}
+          </text>
+          <text x="66" y={step.y + 41} fill="#0A1628" font-size="21" font-family="Newsreader, Georgia, serif">
+            {step.title}
+          </text>
+          {step.lines.map((line, lineIndex) => (
+            <text x="28" y={step.y + 76 + lineIndex * 24} fill="#334155" font-size="15" font-family="Inter, sans-serif">
+              {line}
+            </text>
+          ))}
+          {index < narrow.length - 1 && (
+            <path
+              d={`M${8 + narrowW / 2} ${step.y + step.height + 4}V${step.y + step.height + 30}`}
+              stroke="#7398FF"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          )}
+        </g>
+      ))
+    }
+  </svg>
+</figure>

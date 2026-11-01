@@ -1,0 +1,26 @@
+---
+import Base from "../layouts/Base.astro";
+import PageHero from "../components/ui/PageHero.astro";
+import ContactForm from "../components/ContactForm.astro";
+import { pageByPath, site } from "../content/site";
+import { pageGraph } from "../lib/jsonld";
+import { formAction } from "../lib/forms";
+
+const page = pageByPath("/contact");
+const action = formAction(import.meta.env.PUBLIC_FORMSPREE);
+const routes = site.contact.routes.map((route) => ({
+  id: route.id,
+  heading: route.heading,
+  email: site.contact.inbox,
+  action,
+}));
+---
+
+<Base title={page.title} description={page.description} path={page.path} jsonLd={pageGraph(page)}>
+  <PageHero page={page} intro={site.contact.intro} visual="contact" />
+  <div class="bg-mist">
+    <div class="mx-auto w-full max-w-3xl px-6 py-16 sm:py-24">
+      <ContactForm routes={routes} />
+    </div>
+  </div>
+</Base>

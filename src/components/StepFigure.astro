@@ -1,0 +1,190 @@
+---
+/**
+ * Line illustrations in the logo's rounded-stroke style. `tone="light"`
+ * is for navy backgrounds, `tone="dark"` for white or mist. Decorative:
+ * every figure sits next to a heading that says the same thing in text.
+ */
+interface Props {
+  kind: string;
+  label: string;
+  compact?: boolean;
+  tone?: "dark" | "light";
+  class?: string;
+}
+
+const { kind, compact = false, tone = "dark", class: className } = Astro.props;
+const onNavy = tone === "light";
+const grad = onNavy ? "url(#nv-grad)" : "url(#nv-grad-deep)";
+const solid = onNavy ? "#A9EDFF" : "#2F5BD8";
+const soft = onNavy ? "rgba(169,237,255,0.35)" : "#C7D4F5";
+const track = onNavy ? "rgba(255,255,255,0.08)" : "#EEF2F8";
+const ink = onNavy ? "#E2E8F0" : "#0A1628";
+const panel = onNavy ? "rgba(255,255,255,0.03)" : "#FFFFFF";
+const text = { fill: ink, stroke: "none", "font-family": "Inter, sans-serif" };
+const streams = ["Speech timing and voice", "Language", "Facial movement", "Background information"];
+const widths = [196, 150, 112, 74];
+---
+
+<svg
+  aria-hidden="true"
+  focusable="false"
+  viewBox={compact ? "0 0 80 80" : "0 0 360 200"}
+  fill="none"
+  class:list={[compact ? "h-16 w-16" : "h-auto w-full max-w-md", className]}
+>
+  <g stroke-linecap="round" stroke-linejoin="round">
+    {
+      kind === "conversation" &&
+        (compact ? (
+          <g stroke-width="2.5">
+            <rect x="22" y="8" width="36" height="64" rx="9" stroke={grad} />
+            <path d="M30 42c3-8 6-8 9 0s6 8 9 0" stroke={grad} />
+          </g>
+        ) : (
+          <g stroke-width="2.5">
+            <rect x="56" y="12" width="108" height="176" rx="22" stroke={grad} fill={panel} />
+            <path d="M92 26h36" stroke={soft} />
+            <path d="M78 112c9-24 17-24 26 0s17 24 26 0 13-16 20 0" stroke={grad} />
+            <path d="M192 44h120a14 14 0 0 1 14 14v34a14 14 0 0 1-14 14h-96l-18 16v-16h-6a14 14 0 0 1-14-14V58a14 14 0 0 1 14-14z" stroke={grad} fill={panel} />
+            <path d="M210 70h92M210 88h58" stroke={soft} stroke-width="5" />
+          </g>
+        ))
+    }
+    {
+      kind === "speech" &&
+        (compact ? (
+          <path d="M6 40c5-14 9-14 14 0s9 14 14 0 7-22 12 0 8 18 13 0 7-10 15 0" stroke={grad} stroke-width="2.5" />
+        ) : (
+          <g stroke-width="3">
+            <path d="M16 100c10-36 20-36 30 0s20 36 30 0 14-60 24 0 16 52 26 0 12-30 22 0" stroke={grad} />
+            <path d="M190 100c8-14 14-14 22 0s14 14 22 0 10-46 20 0 14 40 24 0 12-22 20 0 10 10 16 0 8-6 14 0" stroke={grad} />
+            <path d="M16 156h328" stroke={track} stroke-width="2" />
+            <path d="M16 156h92" stroke={solid} stroke-width="2" />
+            <path d="M160 156h48" stroke={solid} stroke-width="2" />
+          </g>
+        ))
+    }
+    {
+      kind === "language" &&
+        (compact ? (
+          <g fill={grad}>
+            <rect x="12" y="20" width="40" height="8" rx="4" />
+            <rect x="56" y="20" width="12" height="8" rx="4" />
+            <rect x="12" y="36" width="24" height="8" rx="4" />
+            <rect x="40" y="36" width="28" height="8" rx="4" />
+            <rect x="12" y="52" width="34" height="8" rx="4" />
+          </g>
+        ) : (
+          <g>
+            <g fill={grad}>
+              <rect x="24" y="40" width="92" height="16" rx="8" />
+              <rect x="126" y="40" width="48" height="16" rx="8" />
+              <rect x="184" y="40" width="120" height="16" rx="8" />
+              <rect x="24" y="74" width="64" height="16" rx="8" />
+              <rect x="98" y="74" width="140" height="16" rx="8" />
+              <rect x="24" y="108" width="110" height="16" rx="8" />
+              <rect x="144" y="108" width="72" height="16" rx="8" />
+            </g>
+            <rect x="24" y="142" width="180" height="16" rx="8" fill={track} />
+            <path d="M126 36v-12M238 70v-12" stroke={soft} stroke-width="2" />
+          </g>
+        ))
+    }
+    {
+      kind === "face" &&
+        (compact ? (
+          <g stroke-width="2.5">
+            <ellipse cx="38" cy="40" rx="22" ry="28" stroke={grad} />
+            <path d="M29 34h6M42 34h6M32 52h12" stroke={solid} />
+            <path d="M68 30c4 6 4 14 0 20" stroke={soft} />
+          </g>
+        ) : (
+          <g stroke-width="2.5">
+            <ellipse cx="150" cy="100" rx="60" ry="78" stroke={grad} fill={panel} />
+            <path d="M122 84h16M162 84h16M150 92v20M132 138h36" stroke={soft} stroke-width="2" />
+            <path d="M128 92l22 20 22-20M132 138l18-26 18 26" stroke={soft} stroke-width="1.5" stroke-dasharray="3 5" />
+            <g fill={solid} stroke="none">
+              <circle cx="122" cy="84" r="3.5" />
+              <circle cx="138" cy="84" r="3.5" />
+              <circle cx="162" cy="84" r="3.5" />
+              <circle cx="178" cy="84" r="3.5" />
+              <circle cx="150" cy="112" r="3.5" />
+              <circle cx="132" cy="138" r="3.5" />
+              <circle cx="168" cy="138" r="3.5" />
+              <circle cx="150" cy="164" r="3.5" />
+            </g>
+            <path d="M236 70c12 18 12 42 0 60M258 56c18 26 18 62 0 88" stroke={soft} />
+          </g>
+        ))
+    }
+    {
+      kind === "background" &&
+        (compact ? (
+          <g stroke-width="2.5">
+            <rect x="12" y="12" width="56" height="56" rx="12" stroke={grad} />
+            <path d="M24 30h32M24 42h22M24 54h28" stroke={soft} />
+          </g>
+        ) : (
+          <g>
+            <rect x="24" y="20" width="312" height="160" rx="20" stroke={grad} stroke-width="2.5" fill={panel} />
+            {["Age", "Education", "Context"].map((label, index) => (
+              <g>
+                <text x="52" y={66 + index * 42} font-size="17" {...text}>
+                  {label}
+                </text>
+                <rect x="170" y={56 + index * 42} width="138" height="10" rx="5" fill={track} />
+                <rect x="170" y={56 + index * 42} width={[96, 64, 112][index]} height="10" rx="5" fill={grad} />
+              </g>
+            ))}
+          </g>
+        ))
+    }
+    {
+      kind === "model" && (
+        <g stroke-width="2.5">
+          <path d="M20 30C130 30 170 100 262 100" stroke={grad} />
+          <path d="M20 76C130 76 170 100 262 100" stroke={grad} />
+          <path d="M20 124C130 124 170 100 262 100" stroke={grad} />
+          <path d="M20 170C130 170 170 100 262 100" stroke={grad} />
+          <path d="M262 100h58" stroke={solid} stroke-width="3" />
+          <circle cx="262" cy="100" r="6" stroke={solid} fill={onNavy ? "#0A1628" : "#FFFFFF"} />
+          <circle cx="330" cy="100" r="20" fill="url(#nv-node)" stroke="none" />
+          <circle cx="330" cy="100" r="7" fill={solid} stroke="none" />
+        </g>
+      )
+    }
+    {
+      kind === "score" && (
+        <g>
+          {streams.map((stream, index) => (
+            <g>
+              <text x="24" y={30 + index * 44} font-size="14" {...text}>
+                {stream}
+              </text>
+              <rect x="24" y={38 + index * 44} width="312" height="8" rx="4" fill={track} />
+              <rect x="24" y={38 + index * 44} width={widths[index]} height="8" rx="4" fill={grad} />
+            </g>
+          ))}
+        </g>
+      )
+    }
+    {
+      kind === "clinician" && (
+        <g stroke-width="2.5">
+          <circle cx="80" cy="66" r="26" stroke={grad} />
+          <path d="M40 160c6-38 74-38 80 0" stroke={grad} />
+          <rect x="160" y="30" width="176" height="140" rx="18" stroke={grad} fill={panel} />
+          <g stroke="none">
+            {[0, 1, 2, 3].map((index) => (
+              <g>
+                <rect x="182" y={58 + index * 26} width="132" height="8" rx="4" fill={track} />
+                <rect x="182" y={58 + index * 26} width={[110, 84, 60, 38][index]} height="8" rx="4" fill={grad} />
+              </g>
+            ))}
+          </g>
+          <path d="M110 100l18-18" stroke={soft} />
+        </g>
+      )
+    }
+  </g>
+</svg>
