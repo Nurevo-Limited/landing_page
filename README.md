@@ -44,9 +44,30 @@ Until it is set, the Send button stays disabled.
 
 ## Deploy
 
-The site is hosted on Vercel. The build command is `npm run build` and the output directory is `dist`.
+Production is https://nurevo.health, without `www`. `www.nurevo.health` redirects to that address.
 
-Production should use the domain `nurevo.health`, without `www`. Host redirects for `nurevo.tech`, `www.nurevo.tech`, and `www.nurevo.health` are in `vercel.json`. They only work after those domains are attached to the same Vercel project.
+The site is a private S3 bucket behind CloudFront. DNS for `nurevo.health` is the Route 53 zone already in the AWS account. `infra/site.yaml` describes the bucket, certificate, distribution, DNS records, and the GitHub publish role.
+
+GitHub Actions (`.github/workflows/ci.yml`) runs the checks on pull requests. A push to `main` builds the site and publishes `dist/`. `PUBLIC_FORMSPREE` is set in that workflow and is baked into the contact page at build time.
+
+`nurevo.tech` is not part of this deployment. Its website still points at the previous host, and its mail records stay as they are.
+
+Create or update the AWS resources:
+
+```bash
+aws cloudformation deploy \
+  --profile nurevo \
+  --region us-east-1 \
+  --stack-name nurevo-landing \
+  --template-file infra/site.yaml \
+  --capabilities CAPABILITY_NAMED_IAM
+```
+
+Publish a build from this machine:
+
+```bash
+AWS_PROFILE=nurevo npm run publish
+```
 
 See `HANDOVER.md` before changing copy. See `SEARCH-SETUP.md` for search-engine verification.
 

@@ -92,6 +92,15 @@ Changes requested by the site owner after reviewing the redesign.
 - Talk to us keeps the topic dropdown. Every topic is sent to info@nurevo.tech through one Formspree form (`PUBLIC_FORMSPREE`).
 - Solutions roadmap: the working prototype and feasibility testing are complete, and model development is in progress. Clinical studies and the UK pathway remain planned.
 
+### 2 November 2026
+
+Moved production hosting from Vercel to AWS.
+
+- `nurevo.health` and `www.nurevo.health` are served from a private S3 bucket through CloudFront. The template is `infra/site.yaml`. DNS stays in the existing Route 53 zone.
+- GitHub Actions publishes `main`. The contact form address `PUBLIC_FORMSPREE` is set in that workflow.
+- Removed Vercel Web Analytics. The privacy and cookie notices now say the site does not use analytics.
+- `nurevo.tech` is unchanged. Its website still points at the previous host, and its mail records stay in Route 53.
+
 ## 3. How the site is built
 
 The site is a static [Astro](https://astro.build) project with Tailwind CSS. The body font is Inter and the heading font is Newsreader. Both are loaded from the project itself, not from a third-party font host. There is no React. Page text is HTML. The mobile menu uses a `details` element, so it works with JavaScript off.
@@ -102,7 +111,7 @@ Motion is CSS only. `.draw`, `.fade` and `.rise` play once on load. `.reveal` an
 
 The content security policy blocks inline `style` attributes and inline scripts. Put colours in classes or SVG attributes, and put scripts in `public/` and load them with `src`, as `contact-form.js` and `copy.js` do.
 
-Vercel hosts the site. `vercel.json` sets the build, the security headers, and the domain redirects. A small file, `public/analytics.js`, loads Vercel Web Analytics from `/_vercel/insights/script.js` when that feature is turned on for the project. It does not use cookies.
+AWS hosts the site. CloudFront adds the security headers, and a CloudFront function does the redirects and the extensionless page routes. `vercel.json` keeps the same rules for any leftover Vercel project. The site does not load analytics.
 
 Node.js 22 is the version to use. See `.nvmrc`.
 
@@ -125,6 +134,8 @@ Node.js 22 is the version to use. See `.nvmrc`.
 | Social images, one per page | `public/og/`, built by `scripts/build-og.mjs` |
 | IndexNow ping and key | `scripts/indexnow.mjs` and the key file at the root of `public/` |
 | Release check | `scripts/check-release.mjs` |
+| AWS hosting | `infra/site.yaml` |
+| Publish | `scripts/publish.sh`, run by `.github/workflows/ci.yml` on `main` |
 
 `site.ts` is the only place company facts are written. The footer, the pages, the structured data, `llms.txt`, and the sitemap read from it. If you type a fact into a page by hand, the next edit will drift.
 
@@ -145,7 +156,7 @@ News was removed on 1 November 2026 because it held only one announcement. To br
 1. Add a `news` object in `site.ts` with an intro and the post's headline, date and paragraphs.
 2. Add page entries in `site.pages` for `/news` (kind `news`) and the post (kind `article`), with titles ending in `| Nurevo` and descriptions under 160 characters.
 3. Add the pages under `src/pages/news/`, a markdown body for each path in `src/lib/markdown.ts`, and a `NewsArticle` node in `src/lib/jsonld.ts`.
-4. Remove the two `/news` redirects from `vercel.json`, and add `/news` to the Company list in `footerGroups`.
+4. Remove the `/news` redirects from the CloudFront function in `infra/site.yaml` and from `vercel.json`, and add `/news` to the Company list in `footerGroups`.
 5. Do not add a quote, an amount, or a person's name unless that has been explicitly approved. Run `npm run og`, and add a dated line to the change log.
 
 ### Approve draft copy
@@ -161,7 +172,7 @@ The form keeps a topic dropdown, and every topic posts to one Formspree form. Th
 1. Sign in at [formspree.io](https://formspree.io) with a company account.
 2. Create one form, "Talk to us", sending to info@nurevo.tech. Confirm that inbox when Formspree asks.
 3. In the form's settings, add `nurevo.health` as an allowed domain.
-4. In Vercel, open Settings, then Environment Variables, and add `PUBLIC_FORMSPREE`, set to the form's full URL, such as `https://formspree.io/f/abcdwxyz`. Do the same in a local `.env` to test. Remove `PUBLIC_FORMSPREE_INVESTORS`, `PUBLIC_FORMSPREE_PARTNERS` and `PUBLIC_FORMSPREE_MEDIA` if they are still set.
+4. Set `PUBLIC_FORMSPREE` to the form's full URL, such as `https://formspree.io/f/abcdwxyz`, in `.github/workflows/ci.yml`. Do the same in a local `.env` to test. Remove `PUBLIC_FORMSPREE_INVESTORS`, `PUBLIC_FORMSPREE_PARTNERS` and `PUBLIC_FORMSPREE_MEDIA` if they are still set.
 5. Redeploy. Send one test message for each topic and confirm each one arrives at info@nurevo.tech.
 
 Until the address is set, the Send button stays disabled and the build prints a warning. The security policy already allows the form to post to Formspree.
@@ -229,12 +240,12 @@ The release check enforces the banned words, the Alzheimer's exception, the remo
 ## 6. Domains, hosting, and analytics
 
 - Primary domain: `https://nurevo.health` with no `www`.
-- `vercel.json` permanently redirects `nurevo.tech`, `www.nurevo.tech`, and `www.nurevo.health` to the same path on `https://nurevo.health`.
-- Those redirects work only when all of those hostnames are attached to this Vercel project. `nurevo.health` should be the production domain.
+- CloudFront permanently redirects `www.nurevo.health` to the same path on `https://nurevo.health`.
+- `nurevo.tech` and `www.nurevo.tech` are not on this distribution. Moving them would replace the live site at `nurevo.tech`. Leave the mail records in that Route 53 zone alone.
 - Canonical links point at `nurevo.health`.
-- Analytics is Vercel Web Analytics, loaded by `public/analytics.js`. Turn the feature on in the Vercel project. It is cookieless. Do not add a tracking pixel or a cookie banner.
-- Security headers, including a content security policy, are in `vercel.json`. If you add a new script host, update that policy. Do not weaken it so that an inline script can run.
-- In Vercel Firewall or Bot Protection, do not block GPTBot, OAI-SearchBot, ChatGPT-User, ClaudeBot, Claude-SearchBot, Claude-User, PerplexityBot, Perplexity-User, Google-Extended, Googlebot, Applebot, Applebot-Extended, Bingbot, DuckAssistBot, Amazonbot, Meta-ExternalAgent, MistralAI-User, or CCBot. `robots.txt` allows them. A firewall rule can still stop them if it is left on.
+- The site does not use analytics. Do not add a tracking pixel or a cookie banner.
+- Security headers, including a content security policy, are on the CloudFront distribution in `infra/site.yaml`. The same policy is in `vercel.json` for a leftover Vercel project. If you add a new script host, update both. Do not weaken the policy so that an inline script can run.
+- Do not put a firewall in front of the site that blocks GPTBot, OAI-SearchBot, ChatGPT-User, ClaudeBot, Claude-SearchBot, Claude-User, PerplexityBot, Perplexity-User, Google-Extended, Googlebot, Applebot, Applebot-Extended, Bingbot, DuckAssistBot, Amazonbot, Meta-ExternalAgent, MistralAI-User, or CCBot. `robots.txt` allows them.
 - Markdown copies (`*.md`) are sent with `X-Robots-Tag: noindex`, so search engines index the HTML page and AI tools can still fetch the markdown.
 
 Search Console and Bing setup are in `SEARCH-SETUP.md`.
@@ -259,8 +270,7 @@ To check AI access after a deploy, fetch `/`, `/llms.txt`, `/llms-full.txt` and 
 - One Formspree form that emails info@nurevo.tech. See "Set up the contact form" above.
 - Investor. No backer is named until an investment is confirmed. See "Restore the investor".
 - Legal review of the privacy, cookies, terms, and accessibility pages. They are marked as placeholders.
-- DNS cutover: attach `nurevo.health` as the primary domain, keep `nurevo.tech` on the same project, and confirm the redirects.
-- Turn on Vercel Web Analytics, and confirm the firewall is not blocking the AI crawlers listed above.
+- `nurevo.tech` still points at the previous host. Attach it to CloudFront only when that site should redirect to `nurevo.health`. Do not change its MX or DKIM records.
 - Stage line. The design brief suggests "Pre-seed. Prototype stage. Preparing clinical validation." The site keeps the approved line "Pre-seed. Working prototype of the data pipeline; preparing clinical validation." Change it only if the company agrees.
 - Published research citations for "why it may matter" on each stream card on How it works. The cards show only "What we look at" until approved citations are supplied.
 - Paste the approved short description, unchanged, into Crunchbase, Dealroom, PitchBook and LinkedIn. Add each profile URL to `extraSameAs`. AI tools rely heavily on these profiles.

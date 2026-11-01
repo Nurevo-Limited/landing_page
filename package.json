@@ -14,7 +14,8 @@
     "preview": "astro preview",
     "check": "tsx scripts/check-release.mjs",
     "og": "tsx scripts/build-og.mjs",
-    "indexnow": "tsx scripts/indexnow.mjs"
+    "indexnow": "tsx scripts/indexnow.mjs",
+    "publish": "bash scripts/publish.sh"
   },
   "dependencies": {
     "@fontsource/inter": "^5.2.8",

@@ -30,7 +30,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formspree.io; img-src 'self' data:; font-src 'self'; style-src 'self'; script-src 'self' https://va.vercel-scripts.com; connect-src 'self' https://formspree.io https://va.vercel-scripts.com https://vitals.vercel-insights.com; upgrade-insecure-requests"
+          "value": "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formspree.io; img-src 'self' data:; font-src 'self'; style-src 'self'; script-src 'self'; connect-src 'self' https://formspree.io; upgrade-insecure-requests"
         }
       ]
     },

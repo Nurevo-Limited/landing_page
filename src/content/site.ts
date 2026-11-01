@@ -820,12 +820,12 @@ export const site = {
       "Data controller: Nurevo Technology Limited, 89/63 Holyrood Road, Edinburgh, EH8 8BA, United Kingdom. Company number SC892389.",
       "ICO registration: [number].",
       "Contact: info@nurevo.health.",
-      "This website uses cookieless analytics. It does not use tracking pixels or a cookie banner.",
+      "This website does not use analytics, tracking pixels, or a cookie banner.",
       "Do not send personal health information through the contact form.",
       "The full privacy notice will be published after legal review.",
     ],
     cookies: [
-      "This website uses cookieless analytics. It does not set tracking cookies, and it does not use a cookie banner.",
+      "This website does not use analytics or tracking cookies, and it does not use a cookie banner.",
       "The full cookie notice will be published after legal review.",
     ],
     terms: [
@@ -951,7 +951,7 @@ export const site = {
       path: "/cookies",
       title: "Cookies | Nurevo",
       description:
-        "Placeholder cookie notice. This site uses cookieless analytics and has no cookie banner.",
+        "Placeholder cookie notice. This site does not use analytics or tracking cookies.",
       label: "Cookies",
       h1: "Cookies",
       nav: false,

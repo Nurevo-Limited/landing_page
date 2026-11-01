@@ -364,7 +364,7 @@ const contactHtml = fs.existsSync(path.join(dist, "contact/index.html"))
   : "";
 if (/<button[^>]*type="submit"[^>]*disabled/.test(contactHtml)) {
   console.warn(
-    "Warning: no Formspree address is set, so the contact form's Send button is disabled. Set PUBLIC_FORMSPREE in Vercel (see .env.example). The form must email info@nurevo.tech.",
+    "Warning: no Formspree address is set, so the contact form's Send button is disabled. Set PUBLIC_FORMSPREE for the build (see .github/workflows/ci.yml and .env.example). The form must email info@nurevo.tech.",
   );
 }
 if (draftMarkers > 0) {

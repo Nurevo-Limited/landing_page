@@ -12,7 +12,7 @@ https://nurevo.health/sitemap.xml
 
 1. Open [Google Search Console](https://search.google.com/search-console) with the Google account that should own the property.
 2. Add a property. Choose the domain property `nurevo.health`, not a URL-prefix property. A domain property covers `www` and the apex together.
-3. Google shows a DNS TXT record. Add that record at the DNS host for `nurevo.health`. Do not remove the records that point the domain at Vercel.
+3. Google shows a DNS TXT record. Add that record in the Route 53 zone for `nurevo.health`. Do not remove the alias records that point the domain at CloudFront.
 4. Wait for DNS to update, then click verify in Search Console.
 5. Open Sitemaps. Submit `https://nurevo.health/sitemap.xml`.
 6. Use URL inspection on the home page and request indexing once the new pages are live.
@@ -30,5 +30,5 @@ Bing can also import a verified site from Google Search Console. DNS verificatio
 ## After submission
 
 - Confirm the live `robots.txt` allows GPTBot, OAI-SearchBot, ChatGPT-User, ClaudeBot, Claude-SearchBot, Claude-User, PerplexityBot, Google-Extended, Applebot-Extended, and Bingbot.
-- In the Vercel project, check Firewall and Bot Protection. Those tools must not challenge or block the crawlers listed above. Attack challenge mode and a blanket bot fight will stop AI tools from reading the site.
+- Do not put a firewall in front of CloudFront that challenges or blocks the crawlers listed above. A challenge page will stop AI tools from reading the site.
 - Give the new sitemap a few days, then look for coverage or indexing errors in both consoles.
