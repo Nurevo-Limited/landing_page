@@ -1,0 +1,91 @@
+---
+/**
+ * One contact form. Every topic posts to the same Formspree form, which
+ * delivers to info@nurevo.tech. Set that form URL as PUBLIC_FORMSPREE
+ * (see .env.example). With JavaScript the message is sent
+ * in the page; without it the browser posts to Formspree directly.
+ */
+import { site } from "../content/site";
+
+interface Route {
+  id: string;
+  heading: string;
+  email: string;
+  action: string | null;
+}
+
+interface Props {
+  routes: Route[];
+}
+
+const { routes } = Astro.props;
+const fields = site.contact.fields;
+const c = site.contact;
+const ready = routes.some((route) => route.action);
+const initial = routes.find((route) => route.action)?.action ?? "";
+const input = "mt-2 w-full rounded-xl border border-line bg-white px-4 py-3 text-body transition-colors focus:border-accent";
+const label = "block text-sm font-medium text-ink";
+---
+
+<section id="contact-form" class="scroll-mt-24">
+  <span id="investors" class="block scroll-mt-24"></span>
+  <span id="clinical" class="block scroll-mt-24"></span>
+  <span id="media" class="block scroll-mt-24"></span>
+  <form
+    class="space-y-6 rounded-3xl border border-line bg-white p-6 shadow-[0_24px_60px_-30px_rgba(10,22,40,0.25)] sm:p-10"
+    method="post"
+    action={initial || undefined}
+    data-contact
+    data-sending={c.sending}
+    data-sent={c.sent}
+    data-failed={c.failed}
+  >
+    <p class="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden="true">
+      <label for="gotcha">{fields.gotcha}</label>
+      <input id="gotcha" name="_gotcha" tabindex="-1" autocomplete="off" />
+    </p>
+    <input type="hidden" name="_subject" value={c.subject} />
+    <div>
+      <label class={label} for="enquiry-route">{c.routeLabel}</label>
+      <select class={input} id="enquiry-route" name="route" required>
+        {
+          routes.map((route) => (
+            <option value={route.id} data-action={route.action ?? ""}>
+              {route.heading}
+            </option>
+          ))
+        }
+      </select>
+    </div>
+    <div class="grid gap-6 sm:grid-cols-2">
+      <div>
+        <label class={label} for="name">{fields.name}</label>
+        <input class={input} id="name" name="name" type="text" autocomplete="name" required />
+      </div>
+      <div>
+        <label class={label} for="email">{fields.email}</label>
+        <input class={input} id="email" name="email" type="email" autocomplete="email" required />
+      </div>
+    </div>
+    <div>
+      <label class={label} for="organisation">{fields.organisation}</label>
+      <input class={input} id="organisation" name="organisation" type="text" autocomplete="organization" required />
+    </div>
+    <div>
+      <label class={label} for="message">{fields.message}</label>
+      <textarea class={input} id="message" name="message" rows="6" required></textarea>
+    </div>
+    <div class="flex gap-3">
+      <input class="mt-1 h-5 w-5 shrink-0 rounded border-line accent-link" id="consent" name="consent" type="checkbox" value="yes" required />
+      <label class="text-sm leading-6 text-body" for="consent">{fields.consent}</label>
+    </div>
+    <p class="text-sm text-muted" id="health">{site.ui.healthWarning}</p>
+    <div class="flex flex-wrap items-center gap-4">
+      <button class="btn btn-primary" type="submit" disabled={!ready} aria-describedby="health">
+        {site.ui.send}
+      </button>
+      <p class="text-sm" role="status" aria-live="polite" data-contact-status></p>
+    </div>
+  </form>
+  <script src="/contact-form.js" defer></script>
+</section>

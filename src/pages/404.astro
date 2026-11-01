@@ -1,0 +1,24 @@
+---
+import Base from "../layouts/Base.astro";
+import HeroSignal from "../components/HeroSignal.astro";
+import Button from "../components/ui/Button.astro";
+import { pageByPath, site } from "../content/site";
+import { pageGraph } from "../lib/jsonld";
+
+const page = pageByPath("/404");
+---
+
+<Base title={page.title} description={page.description} path={page.path} jsonLd={pageGraph(page)} noindex={true}>
+  <section class="tone-dark relative overflow-clip bg-ink" aria-labelledby="page-title">
+    <div class="mx-auto grid w-full max-w-6xl items-center gap-12 px-6 py-24 sm:py-32 lg:grid-cols-2">
+      <div>
+        <h1 id="page-title" class="font-display text-5xl text-white sm:text-6xl">{page.h1}</h1>
+        <p class="mt-6 max-w-xl text-lg text-slate-300">{site.notFound.text}</p>
+        <div class="mt-10">
+          <Button href="/">{site.notFound.home}</Button>
+        </div>
+      </div>
+      <HeroSignal />
+    </div>
+  </section>
+</Base>

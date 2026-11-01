@@ -1,0 +1,136 @@
+---
+import Base from "../layouts/Base.astro";
+import StepFigure from "../components/StepFigure.astro";
+import PipelineDiagram from "../components/PipelineDiagram.astro";
+import PageHero from "../components/ui/PageHero.astro";
+import Section from "../components/ui/Section.astro";
+import SectionHeading from "../components/ui/SectionHeading.astro";
+import Button from "../components/ui/Button.astro";
+import { pageByPath, site } from "../content/site";
+import { pageGraph } from "../lib/jsonld";
+
+const page = pageByPath("/technology");
+const tech = site.technology;
+const band = (id: string) => {
+  const found = tech.bands.find((item) => item.id === id);
+  if (!found) throw new Error(`Missing technology band ${id}`);
+  return found;
+};
+const streamBands = ["speech", "language", "face", "background"].map(band);
+const conversation = band("conversation");
+const model = band("model");
+const score = band("score");
+const clinician = band("clinician");
+---
+
+<Base title={page.title} description={page.description} path={page.path} jsonLd={pageGraph(page)}>
+  <PageHero page={page} eyebrow={page.label} intro={tech.intro} visual="technology" />
+
+  <Section pad="md" labelledby="takeaways">
+    <div class="rounded-3xl border border-line bg-mist p-8 sm:p-10">
+      <h2 id="takeaways" class="text-xs font-medium uppercase tracking-[0.16em] text-link">{tech.takeawaysTitle}</h2>
+      <ul class="mt-6 grid gap-6 md:grid-cols-3">
+        {
+          tech.takeaways.map((line, index) => (
+            <li class="flex gap-4">
+              <span class="font-display text-3xl leading-none text-link">{index + 1}</span>
+              <span class="text-lg leading-7 text-ink">{line}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </Section>
+
+  <Section pad="md" labelledby="pipeline">
+    <SectionHeading id="pipeline" title={tech.pipelineTitle} intro={tech.flow.description} size="md" />
+    <div class="reveal mt-14">
+      <PipelineDiagram />
+    </div>
+  </Section>
+
+  <Section tone="mist" labelledby={conversation.id} id="step-conversation">
+    <div class="grid items-center gap-12 md:grid-cols-2">
+      <div>
+        <p class="text-sm font-medium text-link">01</p>
+        <h2 id={conversation.id} class="font-display mt-3 text-4xl text-ink">{conversation.heading}</h2>
+        <p class="mt-6 text-lg leading-8">{conversation.text}</p>
+      </div>
+      <div class="reveal flex justify-center rounded-3xl border border-line bg-white p-10">
+        <StepFigure kind={conversation.kind} label={conversation.heading} />
+      </div>
+    </div>
+  </Section>
+
+  <Section labelledby="streams-heading">
+    <p class="text-sm font-medium text-link">02</p>
+    <h2 id="streams-heading" class="font-display mt-3 text-4xl text-ink sm:text-5xl">{tech.streamsTitle}</h2>
+    <ul class="mt-14 grid gap-5 md:grid-cols-2">
+      {
+        streamBands.map((stream) => (
+          <li class="reveal flex flex-col rounded-3xl border border-line bg-white p-3">
+            <div class="flex h-56 items-center justify-center rounded-2xl bg-mist px-8">
+              <StepFigure kind={stream.kind} label={stream.heading} />
+            </div>
+            <div class="px-5 pt-6 pb-5">
+              <h3 id={stream.id} class="font-display scroll-mt-28 text-2xl text-ink">
+                {stream.heading}
+              </h3>
+              <p class="mt-4 text-xs font-medium uppercase tracking-[0.16em] text-muted">{site.ui.whatWeLookAt}</p>
+              <p class="mt-2 leading-7">{stream.text}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </Section>
+
+  <Section tone="deep" labelledby={model.id}>
+    <div class="glow -left-40 top-20 h-[32rem] w-[32rem] opacity-50" aria-hidden="true" slot="bg"></div>
+    <div class="grid gap-16 lg:grid-cols-2">
+      <div>
+        <p class="text-sm font-medium text-accent-2">03</p>
+        <h2 id={model.id} class="font-display mt-3 text-4xl text-white">{model.heading}</h2>
+        <p class="mt-6 text-lg leading-8">{model.text}</p>
+        <div class="reveal mt-10 rounded-3xl border border-white/10 bg-white/[0.02] p-8">
+          <StepFigure kind={model.kind} label={model.heading} tone="light" />
+        </div>
+      </div>
+      <div>
+        <p class="text-sm font-medium text-accent-2">04</p>
+        <h2 id={score.id} class="font-display mt-3 text-4xl text-white">{score.heading}</h2>
+        <p class="mt-6 text-lg leading-8">{score.text}</p>
+        <figure class="reveal m-0 mt-10 rounded-3xl border border-white/10 bg-white/[0.02] p-8">
+          <StepFigure kind={score.kind} label={score.heading} tone="light" />
+          <figcaption class="mt-6 text-sm text-slate-400">{tech.exampleCaption}</figcaption>
+        </figure>
+      </div>
+    </div>
+  </Section>
+
+  <Section labelledby="human">
+    <div class="grid items-center gap-12 md:grid-cols-2">
+      <div>
+        <p class="text-sm font-medium text-link">05</p>
+        <h2 id="human" class="font-display mt-3 text-4xl text-ink">{tech.humanTitle}</h2>
+        <p class="mt-6 text-lg leading-8">{clinician.text}</p>
+      </div>
+      <div class="reveal flex justify-center rounded-3xl border border-line bg-mist p-10">
+        <StepFigure kind={clinician.kind} label={clinician.heading} />
+      </div>
+    </div>
+  </Section>
+
+  <Section pad="md" labelledby="limits">
+    <div class="tone-dark relative overflow-clip rounded-3xl bg-ink p-8 sm:p-12">
+      <div class="glow -right-24 -bottom-24 h-72 w-72 opacity-60" aria-hidden="true"></div>
+      <div class="relative max-w-3xl">
+        <h2 id="limits" class="font-display text-3xl text-white sm:text-4xl">{tech.limitsTitle}</h2>
+        <p class="mt-6 text-lg leading-8 text-slate-300">{site.disclaimer}</p>
+        <div class="mt-8">
+          <Button href="/solutions#research" variant="secondary">{tech.limitsLink}</Button>
+        </div>
+      </div>
+    </div>
+  </Section>
+</Base>

@@ -1,0 +1,71 @@
+---
+/**
+ * Abstract four-stream signal for the home hero. Four lines, one per
+ * stream, draw in once and converge into a single score. Decorative only:
+ * the stream names are written in HTML beside it.
+ */
+---
+
+<div class="relative">
+  <div class="dot-grid absolute inset-0" aria-hidden="true"></div>
+  <div class="glow left-[62%] top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 sm:h-96 sm:w-96" aria-hidden="true"></div>
+  <svg
+    class="relative h-auto w-full"
+    viewBox="0 0 600 380"
+    fill="none"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <g stroke-linecap="round" stroke-linejoin="round">
+      <!-- 1. Speech timing and voice -->
+      <path
+        class="draw delay-1"
+        pathLength="1"
+        d="M20 70c15-30 30-30 45 0s30 30 45 0 30-30 45 0 30 30 45 0 30-22 45 0C330 70 362 190 440 190"
+        stroke="url(#nv-grad)"
+        stroke-width="2.5"
+      ></path>
+      <!-- 2. Language -->
+      <path
+        class="draw delay-2"
+        pathLength="1"
+        d="M20 150h40m12 0h22m12 0h56m12 0h30m12 0h44C330 150 372 190 440 190"
+        stroke="url(#nv-grad)"
+        stroke-width="2.5"
+        opacity="0.9"
+      ></path>
+      <!-- 3. Facial movement -->
+      <path
+        class="draw delay-3"
+        pathLength="1"
+        d="M20 230c40-26 80 26 120 0s80-26 120 0C330 230 372 190 440 190"
+        stroke="url(#nv-grad)"
+        stroke-width="2.5"
+        opacity="0.8"
+      ></path>
+      <!-- 4. Background information -->
+      <path
+        class="draw delay-4"
+        pathLength="1"
+        d="M20 310h240C330 310 362 190 440 190"
+        stroke="url(#nv-grad)"
+        stroke-width="2.5"
+        opacity="0.7"
+      ></path>
+      <g class="fade delay-4" fill="#7398FF">
+        <circle cx="70" cy="310" r="3.5"></circle>
+        <circle cx="130" cy="310" r="3.5"></circle>
+        <circle cx="190" cy="310" r="3.5"></circle>
+        <circle cx="250" cy="310" r="3.5"></circle>
+      </g>
+
+      <!-- Combined output -->
+      <path class="draw delay-5" pathLength="1" d="M440 190H548" stroke="#A9EDFF" stroke-width="3"></path>
+      <circle class="fade delay-5" cx="440" cy="190" r="6" stroke="#A9EDFF" stroke-width="2" fill="#0A1628"></circle>
+      <g class="fade delay-6">
+        <circle cx="560" cy="190" r="34" fill="url(#nv-node)"></circle>
+        <circle cx="560" cy="190" r="9" fill="#A9EDFF"></circle>
+      </g>
+    </g>
+  </svg>
+</div>
